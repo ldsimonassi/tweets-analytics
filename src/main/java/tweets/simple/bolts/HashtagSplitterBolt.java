@@ -27,6 +27,7 @@ public class HashtagSplitterBolt implements IBasicBolt{
 		return null;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void prepare(Map stormConf, TopologyContext context) {
 	}
@@ -35,12 +36,6 @@ public class HashtagSplitterBolt implements IBasicBolt{
 	public void execute(Tuple input, BasicOutputCollector collector) {
 		String tweet = input.getStringByField("tweet");
 		String tweetId = input.getStringByField("tweet_id");
-		try {
-			StringTokenizer strTok = new StringTokenizer(tweet, " ");
-		} catch (NullPointerException npe) {
-			System.err.println("tweet:"+tweet);
-			npe.printStackTrace();
-		}
 		StringTokenizer strTok = new StringTokenizer(tweet, " ");
 		TransactionAttempt tx = (TransactionAttempt)input.getValueByField("txid");
 		HashSet<String> words = new HashSet<String>();

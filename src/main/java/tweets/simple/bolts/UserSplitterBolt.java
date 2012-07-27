@@ -26,6 +26,7 @@ public class UserSplitterBolt implements IBasicBolt{
 		return null;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void prepare(Map stormConf, TopologyContext context) {
 	}

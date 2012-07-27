@@ -44,21 +44,24 @@ public class TweetsPartitionedTransactionalSpout extends BasePartitionedTransact
     			
     			if(lastPartitionMeta == null)
     				nextRead = rq.getNextRead(partition);
-    			else
+    			else {
     				nextRead = lastPartitionMeta.from + lastPartitionMeta.quantity;
+    				rq.setNextRead(partition, nextRead); // Move the cursor
+    			}
     			
     			long quantity = rq.getAvailableToRead(partition, nextRead);
     			quantity = quantity > MAX_TRANSACTION_SIZE ? MAX_TRANSACTION_SIZE : quantity;
-    			PartitionedTransactionMetadata metadata = new PartitionedTransactionMetadata(nextRead, (int)quantity); 
+    			PartitionedTransactionMetadata metadata = new PartitionedTransactionMetadata(nextRead, (int)quantity);
     			
-    			if(quantity > 0)
-    				emitPartitionBatch(tx, collector, partition, metadata);
-
+    			emitPartitionBatch(tx, collector, partition, metadata);
     			return metadata;
     		}
     								
     		@Override
     		public void emitPartitionBatch(TransactionAttempt tx, BatchOutputCollector collector, int partition, PartitionedTransactionMetadata partitionMeta) {
+    			if(partitionMeta.quantity <= 0)
+    				return ;
+    			
     			List<String> messages = rq.getMessages(partition, partitionMeta.from, partitionMeta.quantity);
     			long tweetId = partitionMeta.from;
     			for (String msg : messages) {
@@ -72,11 +75,13 @@ public class TweetsPartitionedTransactionalSpout extends BasePartitionedTransact
         }
     }
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Coordinator getCoordinator(Map conf, TopologyContext context) {
 		return new TweetsPartitionedTransactionalCoordinator();
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Emitter<PartitionedTransactionMetadata> getEmitter(Map conf, TopologyContext context) {
 		return new TweetsPartitionedTransactionalEmitter();

@@ -12,7 +12,7 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 
-
+@SuppressWarnings("rawtypes")
 public class UserHashtagJoinBolt extends BaseBatchBolt {
 	private static final long serialVersionUID = 1L;
 
@@ -38,11 +38,9 @@ public class UserHashtagJoinBolt extends BaseBatchBolt {
 		
 		if("hashtags".equals(source)) {
 			String hashtag = tuple.getStringByField("hashtag");
-			//System.out.println("ht:"+tweetId+":"+hashtag);
 			add(tweetHashtags, tweetId, hashtag);
 		} else if("users".equals(source)) {
 			String user = tuple.getStringByField("user");
-			//System.out.println("us:"+tweetId+":"+user);
 			add(userTweets, user, tweetId);
 		} else {
 			System.err.println("WTF!!!");

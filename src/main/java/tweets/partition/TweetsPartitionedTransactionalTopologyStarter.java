@@ -1,6 +1,5 @@
 package tweets.partition;
 
-
 import org.apache.log4j.Logger;
 
 import tweets.partition.spouts.TweetsPartitionedTransactionalSpout;
@@ -8,8 +7,6 @@ import tweets.simple.bolts.HashtagSplitterBolt;
 import tweets.simple.bolts.RedisCommiterCommiterBolt;
 import tweets.simple.bolts.UserHashtagJoinBolt;
 import tweets.simple.bolts.UserSplitterBolt;
-import tweets.simple.spouts.TweetsTransactionalSpout;
-
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
 import backtype.storm.transactional.TransactionalTopologyBuilder;

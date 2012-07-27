@@ -15,12 +15,14 @@ import backtype.storm.tuple.Tuple;
 
 
 public class RedisCommiterCommiterBolt extends BaseTransactionalBolt implements ICommitter {
+	private static final long serialVersionUID = 1L;
 	public static final String LAST_COMMITED_TRANSACTION_FIELD = "LAST_COMMIT";
 	TransactionAttempt id;
 	BatchOutputCollector collector;
 	Jedis jedis;
 	
 	
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void prepare(Map conf, TopologyContext context,
 			BatchOutputCollector collector, TransactionAttempt id) {
@@ -62,7 +64,14 @@ public class RedisCommiterCommiterBolt extends BaseTransactionalBolt implements 
 	
 	@Override
 	public void finishBatch() {
-		String lastCommitedTransaction = jedis.get(LAST_COMMITED_TRANSACTION_FIELD);
+		String lastCommitedTransaction = null;
+
+		try {
+			lastCommitedTransaction = jedis.get(LAST_COMMITED_TRANSACTION_FIELD);
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+
 		String currentTransaction = ""+id.getTransactionId();
 
 		if(currentTransaction.equals(lastCommitedTransaction))
@@ -73,6 +82,7 @@ public class RedisCommiterCommiterBolt extends BaseTransactionalBolt implements 
 		multi.set(LAST_COMMITED_TRANSACTION_FIELD, currentTransaction);
 
 		Set<String> keys = hashtags.keySet();
+
 		for (String hashtag : keys) {
 			Long count = hashtags.get(hashtag);
 			multi.hincrBy("hashtags", hashtag, count);	
@@ -85,7 +95,6 @@ public class RedisCommiterCommiterBolt extends BaseTransactionalBolt implements 
 		}
 
 		keys = usersHashtags.keySet();
-		//System.out.println("Keys size:"+ keys.size());
 		for (String key : keys) {
 			Long count = usersHashtags.get(key);
 			multi.hincrBy("users_hashtags", key, count);	

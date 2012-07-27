@@ -1,7 +1,9 @@
 package tweets.partition.spouts;
 
-public class PartitionedTransactionMetadata {
-	
+import java.io.Serializable;
+
+public class PartitionedTransactionMetadata implements Serializable {
+	private static final long serialVersionUID = 1L;
 	long from;
 	int quantity;
 	

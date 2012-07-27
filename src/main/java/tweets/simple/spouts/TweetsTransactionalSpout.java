@@ -91,12 +91,14 @@ public class TweetsTransactionalSpout extends BaseTransactionalSpout<Transaction
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public ITransactionalSpout.Coordinator<TransactionMetadata> getCoordinator(
 			Map conf, TopologyContext context) {
 		return new TweetsTransactionalSpoutCoordinator();
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public backtype.storm.transactional.ITransactionalSpout.Emitter<TransactionMetadata> getEmitter(
 			Map conf, TopologyContext context) {

@@ -3,12 +3,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.Transaction;
-
 public class PartitionedTweetsUploader {
 	static PartitionedRQ rq;
-	
+
 	public static void main(String[] args) throws IOException {
 		System.out.println("This process is an infinite loop that uploads a tweets file to the redis server.");
 		System.out.println("Press Ctrl-C to finish this process.");
