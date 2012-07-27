@@ -14,7 +14,7 @@ import backtype.storm.LocalCluster;
 import backtype.storm.transactional.TransactionalTopologyBuilder;
 import backtype.storm.tuple.Fields;
 
-public class TweetsTransactionalTopologyBuilder {
+public class TweetsTransactionalTopologyStarter {
 	public static void main(String[] args) throws InterruptedException {
 			Logger.getRootLogger().removeAllAppenders();
 			TransactionalTopologyBuilder builder = new TransactionalTopologyBuilder("test", "spout", new TweetsTransactionalSpout());

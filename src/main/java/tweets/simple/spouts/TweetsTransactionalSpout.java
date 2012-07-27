@@ -3,29 +3,19 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
-import tweets.simple.bolts.HashtagSplitterBolt;
-import tweets.simple.bolts.RedisCommiterCommiterBolt;
-import tweets.simple.bolts.UserHashtagJoinBolt;
-import tweets.simple.bolts.UserSplitterBolt;
 import tweets.simple.utils.RQ;
-
-import backtype.storm.Config;
-import backtype.storm.LocalCluster;
 import backtype.storm.coordination.BatchOutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseTransactionalSpout;
 import backtype.storm.transactional.ITransactionalSpout;
 import backtype.storm.transactional.TransactionAttempt;
-import backtype.storm.transactional.TransactionalTopologyBuilder;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
 
 
 public class TweetsTransactionalSpout extends BaseTransactionalSpout<TransactionMetadata>{
-	
+	private static final long serialVersionUID = 1L;
 	static final int MAX_TRANSACTION_SIZE = 30;
 	
 	public static class TweetsTransactionalSpoutCoordinator implements ITransactionalSpout.Coordinator<TransactionMetadata> {
