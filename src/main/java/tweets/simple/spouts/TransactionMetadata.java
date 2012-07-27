@@ -6,8 +6,8 @@ import java.io.Serializable;
 public class TransactionMetadata implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	long from;
-	int quantity;
+	public long from;
+	public int quantity;
 	
 	public TransactionMetadata(long from, int quantity) {
 		this.from = from;
