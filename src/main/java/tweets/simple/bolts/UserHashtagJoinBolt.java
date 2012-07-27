@@ -1,3 +1,4 @@
+package tweets.simple.bolts;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -12,7 +13,7 @@ import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 
 
-public class UserHashtagSplitterBolt extends BaseBatchBolt {
+public class UserHashtagJoinBolt extends BaseBatchBolt {
 	private static final long serialVersionUID = 1L;
 
 	BatchOutputCollector collector;
@@ -37,9 +38,11 @@ public class UserHashtagSplitterBolt extends BaseBatchBolt {
 		
 		if("hashtags".equals(source)) {
 			String hashtag = tuple.getStringByField("hashtag");
+			//System.out.println("ht:"+tweetId+":"+hashtag);
 			add(tweetHashtags, tweetId, hashtag);
 		} else if("users".equals(source)) {
 			String user = tuple.getStringByField("user");
+			//System.out.println("us:"+tweetId+":"+user);
 			add(userTweets, user, tweetId);
 		} else {
 			System.err.println("WTF!!!");
@@ -48,15 +51,21 @@ public class UserHashtagSplitterBolt extends BaseBatchBolt {
 
 	@Override
 	public void finishBatch() {
+		
 		for (String user : userTweets.keySet()) {
 			Set<String> tweets = getUserTweets(user);
 			HashMap<String, Integer> hashtagsCounter = new HashMap<String, Integer>();
 			for (String tweet : tweets) {
-				for (String hashtag : getTweetHashtags(tweet)) {
-					Integer count = hashtagsCounter.get(hashtag);
-					if(count == null) 
-						count = 0;
-					count ++;
+				Set<String> hashtags = getTweetHashtags(tweet);
+				if(hashtags != null) {
+					for (String hashtag : hashtags) {
+						Integer count = hashtagsCounter.get(hashtag);
+						if(count == null) 
+							count = 0;
+						count ++;
+						hashtagsCounter.put(hashtag, count);
+					}
+					
 				}
 			}
 			

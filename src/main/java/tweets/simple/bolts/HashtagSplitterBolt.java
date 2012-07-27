@@ -1,3 +1,4 @@
+package tweets.simple.bolts;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -12,13 +13,13 @@ import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 
 
-public class UserSplitterBolt implements IBasicBolt{
+public class HashtagSplitterBolt implements IBasicBolt{
 
 	private static final long serialVersionUID = 1L;
 
 	@Override
 	public void declareOutputFields(OutputFieldsDeclarer declarer) {
-		declarer.declare(new Fields("txid", "tweet_id", "user"));
+		declarer.declareStream("hashtags", new Fields("txid", "tweet_id", "hashtag"));
 	}
 
 	@Override
@@ -34,23 +35,29 @@ public class UserSplitterBolt implements IBasicBolt{
 	public void execute(Tuple input, BasicOutputCollector collector) {
 		String tweet = input.getStringByField("tweet");
 		String tweetId = input.getStringByField("tweet_id");
+		try {
+			StringTokenizer strTok = new StringTokenizer(tweet, " ");
+		} catch (NullPointerException npe) {
+			System.err.println("tweet:"+tweet);
+			npe.printStackTrace();
+		}
 		StringTokenizer strTok = new StringTokenizer(tweet, " ");
 		TransactionAttempt tx = (TransactionAttempt)input.getValueByField("txid");
-		HashSet<String> users = new HashSet<String>();
-
+		HashSet<String> words = new HashSet<String>();
+		
 		while(strTok.hasMoreTokens()) {
-			String user = strTok.nextToken();
-
-			// Ensure that the current word is a user, and that it's not repeated in this tweet.
-			if(user.startsWith("@") && !users.contains(user)) {
-				collector.emit("users", new Values(tx, tweetId, user));
-				users.add(user);
+			String word = strTok.nextToken();
+			
+			// Ensure that the current word is a hashtag, and that it's not repeated in this tweet.
+			if(word.startsWith("#") && !words.contains(word)) {
+				collector.emit("hashtags", new Values(tx, tweetId, word));
+				words.add(word);
 			}
 		}
 	}
 
 	@Override
 	public void cleanup() {
-
 	}
+
 }

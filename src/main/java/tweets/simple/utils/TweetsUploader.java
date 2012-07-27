@@ -1,10 +1,10 @@
+package tweets.simple.utils;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Transaction;
-
 
 public class TweetsUploader {
 	static Jedis jedis;
