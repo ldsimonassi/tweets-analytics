@@ -42,7 +42,6 @@ public class TweetsPartitionedTransactionalSpout extends BasePartitionedTransact
     														    int partition, 
     														    TransactionMetadata lastPartitionMeta) {
     			long nextRead;
-    			
     			if(lastPartitionMeta == null)
     				nextRead = rq.getNextRead(partition);
     			else {
